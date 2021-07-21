@@ -1,4 +1,8 @@
+import pandas as pd
 from pymongo import MongoClient
+from bson.json_util import dumps
+
+from db_connect.model import Model
 
 
 class QueryDb:
@@ -6,16 +10,17 @@ class QueryDb:
         self.clients = MongoClient()
         self.database = self.clients['product_db']
         self.collection = self.database['product_data']
-        self.datas = self.collection.find({})
+        self.datas = self.collection.find({},{})
 
     @property
     def data(self):
-        return self.datas
+        cursor = self.datas
+        return list(cursor)
 
     def __len__(self):
         return self.collection.count_documents({})
 
-    def __getitem__(self, position: int)->dict:
+    def __getitem__(self, position: int) -> dict:
         return self.datas[position]
 
     @property
@@ -23,24 +28,33 @@ class QueryDb:
         dataset = self.collection
         return dataset.find_one({}).keys()
 
-    def get(self,param:str)->list:
-        id = []
-        result=[]
-        datas = self.collection.find({},{param:1})
-        for num,data in enumerate(datas,start=1):
-            id.append(f'{data.get("_id")}')
-            result.append(f'{data.get(param)}')
+    @property
+    def id(self):
+        datas = self.collection.find({}, {'_id': 1})
+        return [f'{data.get("_id")}' for num, data in enumerate(datas, start=1)]
 
+    def get(self, param: str) -> list:
+        id = []
+        result = []
+        cursors = self.collection.find({}, {param})
+        for cursor in cursors:
+            id = cursor['_id']
+            data = cursor[param]
+            model = Model(id, data)
+            result.append(model)
         return result
 
-    def mean(self,param: str)->float:
+    def get_data_to_df(self):
+        df = pd.DataFrame(list(self.collection.find({})))
+        return df
+
+    def mean(self, param: str) -> float:
         result = self.get(param)
-        sum : float = 0.0
+        sum: float = 0.0
         count: int = len(result.get(param))
         for x in result.get(param):
             sum += float(x)
-        return sum/count
+        return sum / count
 
-
-
-
+    def update(self, id: str, value: int):
+        self.collection.update_one({"_id": id}, {"$set": {"NG": value}})

@@ -2,22 +2,23 @@ import math
 
 import numpy as np
 
+from db_connect import QueryDb
+
 
 class SPC:
     param: np.array
     x_bar: list = []
     _ucl: list = []
     _lcl: list = []
+    _db : QueryDb
 
     def __init__(self, param: np.array):
         self.param = param
         count = self.param.shape[0]
-        # print(count)
         self.x_bar = np.repeat(self.mean, count)
-        ucl = np.around(self.mean - 3*self.std,2)
-        lcl = np.around(self.mean + 3 * self.std,2)
-        print(ucl)
-        print(lcl)
+        ucl = np.around(self.mean + 3*self.std,2)
+        lcl = np.around(self.mean - 3 * self.std,2)
+
         self._ucl = np.repeat(ucl, count)
         self._lcl = np.repeat(lcl, count)
 
@@ -36,3 +37,6 @@ class SPC:
     @property
     def lcl(self) -> list:
         return self._lcl
+
+    def __len__(self):
+        return len(self.param)

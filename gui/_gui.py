@@ -8,6 +8,7 @@
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 import numpy as np
+import requests
 from PySide2.QtCore import *
 from PySide2.QtGui import QImage, QPixmap
 from PySide2.QtWidgets import *
@@ -42,7 +43,9 @@ class Ui_Form(object):
     # setupUi
     def showSPC(self, param:str):
 
-        data = np.array(self.q.get(param), dtype='float')
+
+        value = [model.data for model in self.q.get(param)]
+        data = np.array(value, dtype='float')
         spc = SPC(data)
         x_bar = spc.x_bar
         ucl = spc.ucl

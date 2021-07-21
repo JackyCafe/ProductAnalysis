@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 plt.rcParams['font.sans-serif']=['Taipei Sans TC Beta']
 path = os.getcwd()
 workspaces = os.walk(path)
+
+
 def PPA():
     df: DataFrame = pd.read_csv('data/data-2019-lot1.csv')
     keys = df.keys()

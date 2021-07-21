@@ -7,20 +7,30 @@ import matplotlib.pyplot as plt
 
 def main():
     q = QueryDb()
-    param = '射出系統壓力峰值(bar)'
-    cycle_time = np.array(q.get(param),dtype='float')
-    spc = SPC(cycle_time)
-    x_bar = spc.x_bar
-    ucl = spc.ucl
-    lcl = spc.lcl
-    fig, axs = plt.subplots(1, figsize=(15, 15), sharex=True)
-    axs.plot(x_bar, marker='o', color='black')
-    axs.plot(ucl, linestyle='dashed', marker='o', color='red')
-    axs.plot(lcl, linestyle='dashed', marker='o', color='red')
-    axs.plot(cycle_time,linestyle='-',marker='o',color='blue')
 
+    # ids =[]
+    ids = {}
+    for id in q.id:
+         ids[id]=0
 
-    fig.show()
+    # param = '射出系統壓力峰值(bar)'
+    # cycle_times = np.array(q.get(param)['result'], dtype='float')
+    #
+    # spc = SPC(cycle_times)
+    # x_bar = spc.x_bar
+    # ucl = spc.ucl
+    # lcl = spc.lcl
+    for col in list(q.cols)[5:]:
+        param = np.array(q.get(col)['result'],dtype=float)
+        spc = SPC(param)
+        x_bar = spc.x_bar
+        ucl = spc.ucl
+        lcl = spc.lcl
+        for id, data in zip(q.get(col)['id'],np.array(q.get(col)['result'], dtype='float')):
+            if data > ucl[0] or data < lcl[0]:
+                ids[id] += 1
+    #             print(lcl[0],ucl[0],data)
+    print([ids])
 
 
 if __name__ == '__main__':
