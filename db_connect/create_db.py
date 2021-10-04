@@ -6,7 +6,7 @@ from pymongo import MongoClient
 class CreateDB:
     df: DataFrame
 
-    def __init__(self,filename:str):
+    def __init__(self, filename: str):
         self.df = pd.read_csv(filename)
         self.clients = MongoClient()
         self.database = self.clients['product_db']
@@ -18,13 +18,10 @@ class CreateDB:
         self.collection.insert_many(self.records)
 
 
-
 def main():
     db = CreateDB('../data/data-2019-lot1.csv')
     db.insert()
     print('done')
-
-
 
 
 if __name__ == '__main__':

@@ -4,10 +4,9 @@ from db_connect.query_db import QueryDb
 from db_connect.spc import SPC
 import matplotlib.pyplot as plt
 
-
+''' SPC chart 主程式'''
 def main():
     q = QueryDb()
-
     # ids =[]
     ids = {}
     for id in q.id:
@@ -21,7 +20,7 @@ def main():
     # ucl = spc.ucl
     # lcl = spc.lcl
     for col in list(q.cols)[5:]:
-        param = np.array(q.get(col)['result'],dtype=float)
+        param = np.array(q.get(col),dtype=float)
         spc = SPC(param)
         x_bar = spc.x_bar
         ucl = spc.ucl

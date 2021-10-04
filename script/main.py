@@ -1,3 +1,6 @@
+''' SPC 主程式'''
+
+
 from PySide2.QtWidgets import QApplication
 from gui import MainWindow
 

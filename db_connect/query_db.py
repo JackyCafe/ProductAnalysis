@@ -37,6 +37,7 @@ class QueryDb:
         id = []
         result = []
         cursors = self.collection.find({}, {param})
+
         for cursor in cursors:
             id = cursor['_id']
             data = cursor[param]
@@ -58,3 +59,6 @@ class QueryDb:
 
     def update(self, id: str, value: int):
         self.collection.update_one({"_id": id}, {"$set": {"NG": value}})
+
+    def update_pred(self, id: str, value: float):
+        self.collection.update_one({"_id": id}, {"$set": {"Pred": value}})
